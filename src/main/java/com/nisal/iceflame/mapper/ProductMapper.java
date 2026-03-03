@@ -25,7 +25,7 @@ public class ProductMapper {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .images(imageUrls)
-                .isActive(product.isActive())
+                .isActive(product.getIsActive())
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .rating(product.getRating())
                 .portionSize(product.getPortionSize())
@@ -43,7 +43,7 @@ public class ProductMapper {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-        product.setActive(dto.isActive());
+        product.setIsActive(dto.getIsActive());
         product.setPortionSize(dto.getPortionSize());
         product.setRating(dto.getRating());
 

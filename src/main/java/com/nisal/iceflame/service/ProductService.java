@@ -43,6 +43,7 @@ public class ProductService {
         }
 
         Product product = ProductMapper.toEntity(dto);
+        product.setIsActive(true);
         product.setCategory(category);
 
         Product saved = productRepository.save(product);
@@ -64,7 +65,7 @@ public class ProductService {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-        product.setActive(dto.isActive());
+        product.setIsActive(dto.getIsActive());
         product.setPortionSize(dto.getPortionSize());
         product.setRating(dto.getRating());
 

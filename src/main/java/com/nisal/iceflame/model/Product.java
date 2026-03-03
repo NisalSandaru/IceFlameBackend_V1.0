@@ -31,7 +31,7 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
-    private boolean isActive = true;
+    private Boolean isActive = true;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

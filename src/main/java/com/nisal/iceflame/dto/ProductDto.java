@@ -19,7 +19,7 @@ public class ProductDto {
     private String description;
     private Double price;
     private List<String> images;
-    private boolean isActive;
+    private Boolean isActive = true;
     private Long categoryId;
     private Double rating;
     private String portionSize;
