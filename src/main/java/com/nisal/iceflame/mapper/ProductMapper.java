@@ -29,6 +29,7 @@ public class ProductMapper {
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .rating(product.getRating())
                 .portionSize(product.getPortionSize())
+                .kcal(product.getKcal())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
@@ -46,6 +47,7 @@ public class ProductMapper {
         product.setIsActive(dto.getIsActive());
         product.setPortionSize(dto.getPortionSize());
         product.setRating(dto.getRating());
+        product.setKcal(dto.getKcal());
 
         // Convert URLs to ProductImage entities
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {

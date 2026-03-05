@@ -1,6 +1,10 @@
 package com.nisal.iceflame.dto;
 
-import com.nisal.iceflame.model.ProductImage;
+import com.nisal.iceflame.model.CartItem;
+import com.nisal.iceflame.model.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,17 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductDto {
+public class CartDto {
+
     private Long id;
-    private String name;
-    private String description;
-    private Double price;
-    private List<String> images;
-    private Boolean isActive = true;
-    private Long categoryId;
-    private Double rating;
-    private String portionSize;
+    private User user;
+    private List<CartItemDto> items;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer kcal;
 }
