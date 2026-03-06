@@ -1,8 +1,5 @@
 package com.nisal.iceflame.dto;
 
-import com.nisal.iceflame.model.Cart;
-import com.nisal.iceflame.model.Product;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartItemDto {
-
-    private Long id;
+public class AddToCartRequest {
     private Long productId;
-    private String productName;
-    private Double price;
     private int quantity;
 }

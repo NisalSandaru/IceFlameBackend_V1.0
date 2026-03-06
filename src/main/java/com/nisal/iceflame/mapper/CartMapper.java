@@ -1,7 +1,9 @@
 package com.nisal.iceflame.mapper;
 
 import com.nisal.iceflame.dto.CartDto;
+import com.nisal.iceflame.dto.CartItemDto;
 import com.nisal.iceflame.model.Cart;
+import com.nisal.iceflame.model.CartItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,37 +15,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartMapper {
 
-    private final CartItemMapper cartItemMapper;
+    public static CartDto toDto(Cart cart){
 
-    public static CartDto toDto(Cart cart) {
-
-        if (cart == null) return null;
+        List<CartItemDto> items = cart.getItems()
+                .stream()
+                .map(CartMapper::toItemDto)
+                .toList();
 
         return CartDto.builder()
                 .id(cart.getId())
-                .user(cart.getUser())
+                .userId(cart.getUser().getId())
+                .items(items)
                 .createdAt(cart.getCreatedAt())
                 .updatedAt(cart.getUpdatedAt())
-                .items(
-                        cart.getItems() != null
-                                ? cart.getItems()
-                                .stream()
-                                .map(CartItemMapper::toDto)
-                                .collect(Collectors.toList())
-                                : new ArrayList<>()
-                )
                 .build();
     }
 
-    public static Cart toEntity(CartDto dto) {
+    public static CartItemDto toItemDto(CartItem item){
 
-        if (dto == null) return null;
-
-        return Cart.builder()
-                .id(dto.getId())
-                .user(dto.getUser())
-                .createdAt(dto.getCreatedAt())
-                .updatedAt(dto.getUpdatedAt())
+        return CartItemDto.builder()
+                .id(item.getId())
+                .productId(item.getProduct().getId())
+                .productName(item.getProduct().getName())
+                .price(item.getProduct().getPrice())
+                .quantity(item.getQuantity())
                 .build();
     }
+
 }
