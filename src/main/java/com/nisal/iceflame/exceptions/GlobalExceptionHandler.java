@@ -33,6 +33,11 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
   }
 
+  @ExceptionHandler(WishlistException.class)
+  public ResponseEntity<String> handleWishlistException(WishlistException ex) {
+    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+  }
+
   // Optional: handle other exceptions
   @ExceptionHandler(Exception.class)
   public ResponseEntity<String> handleGeneralException(Exception ex) {
