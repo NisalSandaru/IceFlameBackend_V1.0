@@ -57,6 +57,33 @@ public class WishlistService {
         return WishlistMapper.toDto(getWishlist(wishlist.getId()));
     }
 
+    // =====================================================
+    // GET WISHLIST
+    // =====================================================
+    public WishlistDto getWishlistByUser(Long userId) {
+
+        Wishlist wishlist = wishlistRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new WishlistException("Wishlist not found", HttpStatus.NOT_FOUND));
+
+        return WishlistMapper.toDto(wishlist);
+    }
+
+    public WishlistDto removeFromWishlist(Long userId, Long productId) {
+        User user = getUser(userId);
+        Wishlist wishlist = getOrCreateWishlist(user);
+        Product product = getProduct(productId);
+
+        WishlistItem item = wishlistItemRepository
+                .findByWishlistAndProduct(wishlist, product)
+                .orElseThrow(() -> new WishlistException("Item not in wishlist", HttpStatus.NOT_FOUND));
+
+        wishlistItemRepository.delete(item);
+        wishlist.getItems().remove(item);
+
+        return WishlistMapper.toDto(wishlist);
+    }
+
     private User getUser(Long userId) {
 
         User user = userRepository.findById(userId)
