@@ -2,10 +2,7 @@ package com.nisal.iceflame.model;
 
 import com.nisal.iceflame.enums.AddressType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
@@ -20,13 +17,14 @@ public class Address {
 
     private String street;
     private String city;
-    private String zipCode;
+    private String postalCode;
 
     @Enumerated(EnumType.STRING)
     private AddressType type;
 
+    private Boolean isDefault;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 }

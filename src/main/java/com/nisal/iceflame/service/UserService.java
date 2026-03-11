@@ -32,6 +32,7 @@ public class UserService {
 
         user.setFullName(dto.getFullName());
         user.setProfileImageUrl(dto.getProfileImageUrl());
+        user.setMobileNumber(dto.getMobileNumber());
 
         User updatedUser = userRepository.save(user);
 

@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
   }
 
+  @ExceptionHandler(AddressException.class)
+  public ResponseEntity<String> handleAddressException(AddressException ex) {
+    return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+  }
+
   // Optional: handle other exceptions
   @ExceptionHandler(Exception.class)
   public ResponseEntity<String> handleGeneralException(Exception ex) {

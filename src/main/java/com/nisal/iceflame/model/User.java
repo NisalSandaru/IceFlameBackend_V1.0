@@ -34,6 +34,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String mobileNumber;
+
     private String profileImageUrl;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
