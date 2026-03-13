@@ -1,29 +1,22 @@
-package com.nisal.iceflame.model;
+package com.nisal.iceflame.dto;
 
 import com.nisal.iceflame.enums.OrderStatus;
 import com.nisal.iceflame.enums.PaymentMethod;
 import com.nisal.iceflame.enums.PaymentStatus;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Order {
+public class OrderDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userId;
@@ -32,20 +25,13 @@ public class Order {
 
     private Double totalAmount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<OrderItem> items = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
-
-    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    @CreationTimestamp
-    @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    private List<OrderItemDto> items;
+
 }
