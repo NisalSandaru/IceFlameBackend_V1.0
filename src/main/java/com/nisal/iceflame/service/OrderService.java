@@ -20,47 +20,58 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
 
-    public OrderDto checkout(Long userId, Long addressId, PaymentMethod paymentMethod) {
+    public OrderDto createOrder(Long userId, Long addressId, PaymentMethod paymentMethod) {
 
-        // Fetch cart
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartException("Cart not found", HttpStatus.NOT_FOUND));
 
-        // Build order
         Order order = Order.builder()
                 .userId(userId)
                 .addressId(addressId)
                 .status(OrderStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
-                .paymentMethod(paymentMethod) // store enum value
+                .paymentMethod(paymentMethod)
                 .build();
 
         double total = 0;
 
-        // Convert cart items to order items
         for (CartItem cartItem : cart.getItems()) {
+
             Product product = cartItem.getProduct();
+
             OrderItem item = OrderItem.builder()
                     .order(order)
                     .product(product)
                     .quantity(cartItem.getQuantity())
                     .price(product.getPrice())
                     .build();
+
             order.getItems().add(item);
+
             total += product.getPrice() * cartItem.getQuantity();
         }
 
         order.setTotalAmount(total);
 
-        // Save order
         Order saved = orderRepository.save(order);
 
-        // Clear cart immediately if COD
-        if (paymentMethod == PaymentMethod.COD) {
-            cart.getItems().clear();
-            cartRepository.save(cart);
-        }
-
         return OrderMapper.toDto(saved);
+    }
+
+    public OrderDto confirmPayment(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setPaymentStatus(PaymentStatus.COMPLETED);
+        order.setStatus(OrderStatus.CONFIRMED);
+
+        Cart cart = cartRepository.findByUserId(order.getUserId())
+                .orElseThrow(() -> new CartException("Cart not found", HttpStatus.NOT_FOUND));
+
+        cart.getItems().clear();
+        cartRepository.save(cart);
+
+        return OrderMapper.toDto(orderRepository.save(order));
     }
 }

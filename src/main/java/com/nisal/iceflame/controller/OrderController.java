@@ -15,17 +15,23 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/checkout")
-    public ResponseEntity<OrderDto> checkout(
+    @PostMapping("/create")
+    public ResponseEntity<OrderDto> createOrder(
             @RequestBody CheckoutRequest request
     ) {
 
-        OrderDto order = orderService.checkout(
+        OrderDto order = orderService.createOrder(
                 request.getUserId(),
                 request.getAddressId(),
                 request.getPaymentMethod()
         );
 
         return ResponseEntity.ok(order);
+    }
+
+    @PostMapping("/confirm-payment/{orderId}")
+    public ResponseEntity<OrderDto> confirmPayment(@PathVariable Long orderId) {
+
+        return ResponseEntity.ok(orderService.confirmPayment(orderId));
     }
 }
