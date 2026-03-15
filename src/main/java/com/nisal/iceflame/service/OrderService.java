@@ -1,10 +1,13 @@
 package com.nisal.iceflame.service;
 
+import com.nisal.iceflame.dto.CartDto;
 import com.nisal.iceflame.dto.OrderDto;
 import com.nisal.iceflame.enums.OrderStatus;
 import com.nisal.iceflame.enums.PaymentMethod;
 import com.nisal.iceflame.enums.PaymentStatus;
 import com.nisal.iceflame.exceptions.CartException;
+import com.nisal.iceflame.exceptions.OrderException;
+import com.nisal.iceflame.mapper.CartMapper;
 import com.nisal.iceflame.mapper.OrderMapper;
 import com.nisal.iceflame.model.*;
 import com.nisal.iceflame.repository.CartRepository;
@@ -12,6 +15,8 @@ import com.nisal.iceflame.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +78,48 @@ public class OrderService {
         cartRepository.save(cart);
 
         return OrderMapper.toDto(orderRepository.save(order));
+    }
+
+    public List<OrderDto> getCurrentOrders(Long userId) {
+
+        List<OrderStatus> statuses = List.of(
+                OrderStatus.PENDING,
+                OrderStatus.CONFIRMED,
+                OrderStatus.PROCESSING,
+                OrderStatus.SHIPPED
+        );
+
+        List<Order> orders = orderRepository.findByUserIdAndStatusIn(userId, statuses);
+
+        return orders.stream()
+                .map(OrderMapper::toDto)
+                .toList();
+    }
+
+    public List<OrderDto> getPreviousOrders(Long userId) {
+
+        List<OrderStatus> statuses = List.of(
+                OrderStatus.DELIVERED,
+                OrderStatus.CANCELLED
+        );
+
+        List<Order> orders = orderRepository.findByUserIdAndStatusIn(userId, statuses);
+
+        return orders.stream()
+                .map(OrderMapper::toDto)
+                .toList();
+    }
+
+    public List<OrderDto> getOrdersByUser(Long userId) {
+
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        if (orders.isEmpty()) {
+            throw new OrderException("Orders not found", HttpStatus.NOT_FOUND);
+        }
+
+        return orders.stream()
+                .map(OrderMapper::toDto)
+                .toList();
     }
 }

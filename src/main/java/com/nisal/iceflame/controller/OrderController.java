@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -33,5 +35,22 @@ public class OrderController {
     public ResponseEntity<OrderDto> confirmPayment(@PathVariable Long orderId) {
 
         return ResponseEntity.ok(orderService.confirmPayment(orderId));
+    }
+
+    // ALL ORDERS
+    @GetMapping("/user/{userId}")
+    public List<OrderDto> getOrdersByUser(@PathVariable Long userId) {
+
+        return orderService.getOrdersByUser(userId);
+    }
+
+    @GetMapping("/user/{userId}/current")
+    public List<OrderDto> getCurrentOrders(@PathVariable Long userId) {
+        return orderService.getCurrentOrders(userId);
+    }
+
+    @GetMapping("/user/{userId}/previous")
+    public List<OrderDto> getPreviousOrders(@PathVariable Long userId) {
+        return orderService.getPreviousOrders(userId);
     }
 }
