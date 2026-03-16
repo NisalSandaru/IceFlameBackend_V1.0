@@ -53,4 +53,9 @@ public class OrderController {
     public List<OrderDto> getPreviousOrders(@PathVariable Long userId) {
         return orderService.getPreviousOrders(userId);
     }
+
+    @GetMapping("getById/{orderId}")
+    public OrderDto getById(@PathVariable Long orderId) {
+        return orderService.getByOrderId(orderId);
+    }
 }

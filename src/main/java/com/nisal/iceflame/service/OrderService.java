@@ -122,4 +122,11 @@ public class OrderService {
                 .map(OrderMapper::toDto)
                 .toList();
     }
+
+    public OrderDto getByOrderId(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException("Order not found", HttpStatus.NOT_FOUND));
+
+        return OrderMapper.toDto(order);
+    }
 }

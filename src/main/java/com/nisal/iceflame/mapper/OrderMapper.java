@@ -35,6 +35,7 @@ public class OrderMapper {
                 .id(item.getId())
                 .productId(item.getProduct().getId())
                 .productName(item.getProduct().getName())
+                .imgUrl(item.getProduct().getImages().get(0).getImageUrl())
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .build();
