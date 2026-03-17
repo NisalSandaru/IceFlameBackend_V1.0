@@ -24,6 +24,8 @@ public class OrderService {
 
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
+    private final FcmService fcmService;
+    private final UserDeviceService userDeviceService;
 
     public OrderDto createOrder(Long userId, Long addressId, PaymentMethod paymentMethod) {
 
@@ -59,6 +61,17 @@ public class OrderService {
         order.setTotalAmount(total);
 
         Order saved = orderRepository.save(order);
+
+        // ✅ Send notification using UserDeviceService
+        String userFcmToken = userDeviceService.getUserFcmToken(userId);
+        System.out.println("USER TOKEN: " + userFcmToken);
+        if (userFcmToken != null) {
+            fcmService.sendNotification(
+                    userFcmToken,
+                    "New Order Placed!",
+                    "Your order #" + saved.getId() + " has been successfully placed."
+            );
+        }
 
         return OrderMapper.toDto(saved);
     }
