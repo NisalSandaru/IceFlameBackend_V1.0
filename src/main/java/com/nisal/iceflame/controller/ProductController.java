@@ -5,8 +5,12 @@ import com.nisal.iceflame.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -51,5 +55,42 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<List<String>> uploadImages(@RequestParam("files") MultipartFile[] files) {
+        List<String> urls = new ArrayList<>();
+
+        try {
+            String uploadDir = "D:/Work file/Springboot test learning/Apps/IceFlame/uploads/";
+
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            for (MultipartFile file : files) {
+
+                // ✅ FIX: remove spaces
+                String original = file.getOriginalFilename().replaceAll(" ", "_");
+                String fileName = UUID.randomUUID() + "_" + original;
+
+                File destination = new File(uploadDir + fileName);
+                file.transferTo(destination);
+
+                // ✅ URL must match WebConfig
+                String fileUrl = "http://localhost:8080/v1.0/uploads/" + fileName;
+
+                urls.add(fileUrl);
+
+                System.out.println("SAVED FILE PATH: " + destination.getAbsolutePath());
+            }
+
+            return ResponseEntity.ok(urls);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

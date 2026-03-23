@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<Category> findByNameIgnoreCase(String name);
+    Optional<Product> findByNameIgnoreCase(String name);
 
     // Get all active products
     List<Product> findByIsActiveTrue();

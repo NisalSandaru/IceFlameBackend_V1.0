@@ -65,9 +65,14 @@ public class ProductService {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-        product.setIsActive(dto.getIsActive());
-        product.setPortionSize(dto.getPortionSize());
-        product.setRating(dto.getRating());
+        product.setIsActive(true);
+        if (dto.getRating() != null) {
+            product.setPortionSize(dto.getPortionSize());
+        }
+
+        if (dto.getRating() != null) {
+            product.setRating(dto.getRating());
+        }
 
         // Update images
         if (dto.getImages() != null) {
