@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -46,5 +48,24 @@ public class UserService {
                 .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
 
         userRepository.delete(user);
+    }
+
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toDto)
+                .toList();
+    }
+
+    public UserDto updateUserStatus(Long id, Boolean active) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
+
+        user.setIsActive(active);
+
+        User updatedUser = userRepository.save(user);
+
+        return UserMapper.toDto(updatedUser);
     }
 }

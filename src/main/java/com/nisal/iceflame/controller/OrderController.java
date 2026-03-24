@@ -58,4 +58,19 @@ public class OrderController {
     public OrderDto getById(@PathVariable Long orderId) {
         return orderService.getByOrderId(orderId);
     }
+
+    // GET ALL ORDERS (ADMIN)
+    @GetMapping
+    public ResponseEntity<List<OrderDto>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    // UPDATE STATUS (ADMIN)
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<OrderDto> updateStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status
+    ) {
+        return ResponseEntity.ok(orderService.updateStatus(orderId, status));
+    }
 }

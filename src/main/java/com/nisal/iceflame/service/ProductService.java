@@ -42,6 +42,10 @@ public class ProductService {
             throw new ProductException("Product already exists", HttpStatus.CONFLICT);
         }
 
+        if (dto.getPrice() <=0 ){
+            throw new ProductException("Invalid Product Price", HttpStatus.BAD_REQUEST);
+        }
+
         Product product = ProductMapper.toEntity(dto);
         product.setIsActive(true);
         product.setCategory(category);
@@ -57,6 +61,10 @@ public class ProductService {
 
         if (user.getRole() != Role.ADMIN)
             throw new UserException("Access denied! Only admin can update products.", HttpStatus.FORBIDDEN);
+
+        if (dto.getPrice() <=0 ){
+            throw new ProductException("Invalid Product Price", HttpStatus.BAD_REQUEST);
+        }
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException("Product not found", HttpStatus.NOT_FOUND));

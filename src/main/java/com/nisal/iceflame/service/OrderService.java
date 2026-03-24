@@ -8,7 +8,9 @@ import com.nisal.iceflame.enums.PaymentStatus;
 import com.nisal.iceflame.exceptions.CartException;
 import com.nisal.iceflame.exceptions.OrderException;
 import com.nisal.iceflame.mapper.CartMapper;
+import com.nisal.iceflame.mapper.CategoryMapper;
 import com.nisal.iceflame.mapper.OrderMapper;
+import com.nisal.iceflame.mapper.ProductMapper;
 import com.nisal.iceflame.model.*;
 import com.nisal.iceflame.repository.CartRepository;
 import com.nisal.iceflame.repository.OrderRepository;
@@ -141,5 +143,53 @@ public class OrderService {
                 .orElseThrow(() -> new OrderException("Order not found", HttpStatus.NOT_FOUND));
 
         return OrderMapper.toDto(order);
+    }
+
+    public List<OrderDto> getAllOrders(){
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderMapper::toDto)
+                .toList();
+    }
+
+    public OrderDto updateStatus(Long orderId, String status) {
+
+        // 🔍 Find order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException("Order not found", HttpStatus.NOT_FOUND));
+
+        try {
+            // 🔄 Convert string → enum
+            OrderStatus newStatus = OrderStatus.valueOf(status.toUpperCase());
+
+            order.setStatus(newStatus);
+
+            // 💡 OPTIONAL LOGIC (recommended)
+            if (newStatus == OrderStatus.DELIVERED) {
+                order.setPaymentStatus(PaymentStatus.COMPLETED);
+            }
+
+            if (newStatus == OrderStatus.CANCELLED) {
+                order.setPaymentStatus(PaymentStatus.FAILED);
+            }
+
+            Order updated = orderRepository.save(order);
+
+            // 🔔 SEND NOTIFICATION (optional but 🔥)
+            String token = userDeviceService.getUserFcmToken(order.getUserId());
+
+            if (token != null) {
+                fcmService.sendNotification(
+                        token,
+                        "Order Status Updated",
+                        "Your order #" + orderId + " is now " + newStatus
+                );
+            }
+
+            return OrderMapper.toDto(updated);
+
+        } catch (IllegalArgumentException e) {
+            throw new OrderException("Invalid order status", HttpStatus.BAD_REQUEST);
+        }
     }
 }
