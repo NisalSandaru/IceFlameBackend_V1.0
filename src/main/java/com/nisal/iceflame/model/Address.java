@@ -19,8 +19,10 @@ public class Address {
     private String city;
     private String postalCode;
 
-    @Enumerated(EnumType.STRING)
-    private AddressType type;
+//    @Enumerated(EnumType.STRING)
+//    private AddressType type;
+
+    private String title;
 
     private Boolean isDefault;
 

@@ -1,6 +1,7 @@
 package com.nisal.iceflame.mapper;
 
 import com.nisal.iceflame.dto.AddressDto;
+import com.nisal.iceflame.enums.AddressType;
 import com.nisal.iceflame.model.Address;
 import com.nisal.iceflame.model.User;
 
@@ -12,7 +13,8 @@ public class AddressMapper {
                 .street(dto.getStreet())
                 .city(dto.getCity())
                 .postalCode(dto.getPostalCode())
-                .type(dto.getType())
+//                .type(AddressType.valueOf(dto.getType()))
+                .title(dto.getTitle())
                 .isDefault(dto.getIsDefault())
                 .user(user)
                 .build();
@@ -24,7 +26,8 @@ public class AddressMapper {
                 .street(address.getStreet())
                 .city(address.getCity())
                 .postalCode(address.getPostalCode())
-                .type(address.getType())
+//                .type(address.getType().getTitle())
+                .title(address.getTitle())
                 .isDefault(address.getIsDefault())
                 .userId(address.getUser().getId())
                 .build();

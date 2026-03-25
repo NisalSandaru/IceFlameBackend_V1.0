@@ -16,7 +16,8 @@ public class AddressDto {
     private String street;
     private String city;
     private String postalCode;
-    private AddressType type;
+//    private AddressType type;
+private String title;
     private Boolean isDefault;
     private Long userId;
 }

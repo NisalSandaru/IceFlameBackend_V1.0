@@ -80,6 +80,7 @@ public class CategoryService {
         }
 
         category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
         category.setCatImageUrl(dto.getCatImageUrl()); // your field
         category = categoryRepository.save(category);
 

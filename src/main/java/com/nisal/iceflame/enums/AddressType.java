@@ -1,6 +1,20 @@
 package com.nisal.iceflame.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum AddressType {
-    BILLING,
-    SHIPPING
+
+    HOME("Home Address"),
+    WORK("Work Address"),
+    BILLING("Billing Address"),
+    SHIPPING("Shipping Address"),
+    OTHER("Other");
+
+    private final String title;
+
+    AddressType(String title) {
+        this.title = title;
+    }
+
 }

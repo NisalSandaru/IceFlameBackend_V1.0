@@ -55,7 +55,7 @@ public class AddressService {
         address.setStreet(dto.getStreet());
         address.setCity(dto.getCity());
         address.setPostalCode(dto.getPostalCode());
-        address.setType(dto.getType());
+        address.setTitle(dto.getTitle());
 
         return AddressMapper.toDto(addressRepository.save(address));
     }
