@@ -57,40 +57,4 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<List<String>> uploadImages(@RequestParam("files") MultipartFile[] files) {
-        List<String> urls = new ArrayList<>();
-
-        try {
-            String uploadDir = "D:/Work file/Springboot test learning/Apps/IceFlame/uploads/";
-
-            File dir = new File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-            for (MultipartFile file : files) {
-
-                // ✅ FIX: remove spaces
-                String original = file.getOriginalFilename().replaceAll(" ", "_");
-                String fileName = UUID.randomUUID() + "_" + original;
-
-                File destination = new File(uploadDir + fileName);
-                file.transferTo(destination);
-
-                // ✅ URL must match WebConfig
-                String fileUrl = "http://localhost:8080/v1.0/uploads/" + fileName;
-
-                urls.add(fileUrl);
-
-                System.out.println("SAVED FILE PATH: " + destination.getAbsolutePath());
-            }
-
-            return ResponseEntity.ok(urls);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
-    }
 }
