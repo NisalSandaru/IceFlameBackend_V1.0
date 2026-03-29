@@ -106,7 +106,8 @@ public class ProductService {
     }
 
     // Delete product
-    public void deleteProduct(Long productId, Long userId) {
+    public String deleteProduct(Long productId, Long userId) {
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
 
@@ -116,8 +117,20 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException("Product not found", HttpStatus.NOT_FOUND));
 
-        // Optional: check relations like orders here
+        // 🔥 CHECK IF PRODUCT IS USED IN ORDERS
+        if (product.getOrderItems() != null && !product.getOrderItems().isEmpty()) {
+
+            // ❌ Soft delete
+            product.setIsActive(false);
+            productRepository.save(product);
+
+            return "Product is used in orders. It has been deactivated.";
+        }
+
+        // ✅ HARD DELETE
         productRepository.delete(product);
+
+        return "Product deleted successfully";
     }
 
     // Get all active products

@@ -47,6 +47,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images;
 
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

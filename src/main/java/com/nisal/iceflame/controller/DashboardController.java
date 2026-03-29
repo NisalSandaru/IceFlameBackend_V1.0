@@ -1,10 +1,14 @@
 package com.nisal.iceflame.controller;
 
+import com.nisal.iceflame.model.Order;
 import com.nisal.iceflame.model.User;
+import com.nisal.iceflame.repository.OrderRepository;
 import com.nisal.iceflame.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.*;
 
 @RestController
@@ -13,45 +17,96 @@ import java.util.*;
 public class DashboardController {
 
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     @GetMapping
     public Map<String, Object> getDashboardStats() {
 
-        List<User> users = userRepository.findAll();
-
-        long active = users.stream().filter(User::getIsActive).count();
-        long inactive = users.size() - active;
-
         Map<String, Object> res = new HashMap<>();
 
-        // USER DATA
+        // ======================
+        // 👤 USER DATA
+        // ======================
+        List<User> users = userRepository.findAll();
+
+        long active = users.stream()
+                .filter(User::getIsActive)
+                .count();
+
+        long inactive = users.size() - active;
+
         res.put("totalUsers", users.size());
         res.put("activeUsers", active);
         res.put("inactiveUsers", inactive);
 
-        // 👉 TEMP MOCK DATA (until you have Order/Payment tables)
-        res.put("totalOrders", 75);
-        res.put("revenue", 2500);
+        // ======================
+        // 📦 ORDER DATA
+        // ======================
+        List<Order> orders = orderRepository.findAll();
 
-        // 📈 Monthly Revenue
-        List<Map<String, Object>> monthlyRevenue = List.of(
-                Map.of("month", "Jan", "revenue", 500),
-                Map.of("month", "Feb", "revenue", 800),
-                Map.of("month", "Mar", "revenue", 1200),
-                Map.of("month", "Apr", "revenue", 900),
-                Map.of("month", "May", "revenue", 1500)
-        );
+        res.put("totalOrders", orders.size());
 
-        // 📊 Weekly Orders
-        List<Map<String, Object>> weeklyOrders = List.of(
-                Map.of("name", "Mon", "orders", 10),
-                Map.of("name", "Tue", "orders", 20),
-                Map.of("name", "Wed", "orders", 15),
-                Map.of("name", "Thu", "orders", 30),
-                Map.of("name", "Fri", "orders", 25)
-        );
+        // ======================
+        // 💰 REVENUE (TOTAL)
+        // ======================
+        double revenue = orders.stream()
+                .filter(o -> o.getTotalAmount() != null)
+                .mapToDouble(Order::getTotalAmount)
+                .sum();
+
+        res.put("revenue", revenue);
+
+        // ======================
+        // 📊 MONTHLY REVENUE
+        // ======================
+        Map<String, Double> monthlyMap = new LinkedHashMap<>();
+
+        for (Order o : orders) {
+            if (o.getCreatedAt() == null || o.getTotalAmount() == null) continue;
+
+            Month month = o.getCreatedAt().getMonth();
+            String monthName = month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+            monthlyMap.put(monthName,
+                    monthlyMap.getOrDefault(monthName, 0.0) + o.getTotalAmount());
+        }
+
+        List<Map<String, Object>> monthlyRevenue = new ArrayList<>();
+
+        for (String month : monthlyMap.keySet()) {
+            monthlyRevenue.add(Map.of(
+                    "month", month,
+                    "revenue", monthlyMap.get(month)
+            ));
+        }
 
         res.put("monthlyRevenue", monthlyRevenue);
+
+        // ======================
+        // 📈 WEEKLY ORDERS
+        // ======================
+        Map<String, Long> weeklyMap = new LinkedHashMap<>();
+
+        for (Order o : orders) {
+            if (o.getCreatedAt() == null) continue;
+
+            String day = o.getCreatedAt()
+                    .getDayOfWeek()
+                    .getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+            weeklyMap.put(day,
+                    weeklyMap.getOrDefault(day, 0L) + 1);
+        }
+
+        List<Map<String, Object>> weeklyOrders = new ArrayList<>();
+
+        for (String day : weeklyMap.keySet()) {
+            weeklyOrders.add(Map.of(
+                    "name", day,
+                    "orders", weeklyMap.get(day)
+            ));
+        }
+
         res.put("weeklyOrders", weeklyOrders);
 
         return res;
