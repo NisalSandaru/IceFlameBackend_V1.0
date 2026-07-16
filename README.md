@@ -169,8 +169,6 @@ src/main/java/com/nisal/iceflame/
 
 ## 📄 License
 
-This project is provided as-is for learning purposes. Add your preferred
-license here.
 
 ---
 
